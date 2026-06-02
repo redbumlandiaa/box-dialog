@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>boxDialog - Ejemplos y documentación</title>
+  <link rel="stylesheet" href="box-dialog.css" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #1f2937;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+    header {
+      padding: 28px 32px 0;
+    }
+    h1 {
+      margin: 0 0 6px;
+      font-size: 28px;
+    }
+    header p {
+      margin: 0 0 20px;
+      color: #6b7280;
+    }
+    /* ===== Tabs ===== */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 0 24px;
+    }
+    .tab {
+      padding: 12px 18px;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      color: #6b7280;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tab:hover { color: #1f2937; }
+    .tab.active {
+      color: #1ab849;
+      border-bottom-color: #1ab849;
+    }
+    .tab .badge {
+      background: #fbbf24;
+      color: #78350f;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: bold;
+    }
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* ===== Examples panel ===== */
+    .examples {
+      padding: 24px 32px 16px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 10px;
+    }
+    button.demo {
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      color: #1f2937;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 150ms;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: inherit;
+    }
+    button.demo:hover {
+      background: #f3f4f6;
+      border-color: #d1d5db;
+      transform: translateY(-1px);
+    }
+    button.demo .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-green { background: #1ab849; }
+    .dot-red { background: #db0d0d; }
+    .dot-blue { background: #230de3; }
+    .dot-cyan { background: #0891b2; }
+    .dot-gray { background: #6b7280; }
+    .log {
+      margin: 0 32px 28px;
+      padding: 14px 16px;
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 10px;
+      font-family: "SF Mono", Monaco, Consolas, monospace;
+      font-size: 13px;
+      min-height: 60px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .log-label {
+      display: block;
+      margin: 8px 32px 6px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #6b7280;
+      font-weight: 600;
+    }
+
+    /* ===== Docs panel ===== */
+    .docs {
+      padding: 28px 32px 32px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    .docs h2 {
+      font-size: 22px;
+      margin: 28px 0 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #1ab849;
+      color: #1f2937;
+    }
+    .docs h2:first-child { margin-top: 0; }
+    .docs h3 {
+      font-size: 16px;
+      margin: 20px 0 8px;
+      color: #1f2937;
+    }
+    .docs h3 code {
+      background: #f3f4f6;
+      color: #1ab849;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .docs p {
+      margin: 8px 0;
+      line-height: 1.6;
+      color: #374151;
+    }
+    .docs ul {
+      margin: 8px 0;
+      padding-left: 22px;
+      line-height: 1.7;
+      color: #374151;
+    }
+    .docs code {
+      font-family: "SF Mono", Monaco, Consolas, monospace;
+      background: #f3f4f6;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 13px;
+      color: #be185d;
+    }
+    .code-block {
+      position: relative;
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 10px 0 14px;
+      overflow-x: auto;
+      font-family: "SF Mono", Monaco, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .code-block pre {
+      margin: 0;
+      white-space: pre;
+    }
+    .code-block .c-kw { color: #f472b6; }
+    .code-block .c-str { color: #86efac; }
+    .code-block .c-num { color: #fbbf24; }
+    .code-block .c-com { color: #64748b; font-style: italic; }
+    .code-block .c-fn { color: #7dd3fc; }
+    .code-block .c-var { color: #e2e8f0; }
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #e2e8f0;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 120ms;
+    }
+    .copy-btn:hover { background: rgba(255,255,255,0.2); }
+    .copy-btn.copied { background: #1ab849; border-color: #1ab849; }
+
+    .docs table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 13px;
+    }
+    .docs th, .docs td {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid #e5e7eb;
+      vertical-align: top;
+    }
+    .docs th {
+      background: #f9fafb;
+      font-weight: 600;
+      color: #1f2937;
+    }
+    .docs td:first-child { font-family: "SF Mono", Monaco, Consolas, monospace; color: #be185d; }
+    .docs .type { color: #0891b2; font-style: italic; }
+    .kbd {
+      display: inline-block;
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      border-bottom-width: 2px;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-family: "SF Mono", Monaco, Consolas, monospace;
+      font-size: 12px;
+      color: #1f2937;
+      min-width: 22px;
+      text-align: center;
+    }
+    .footer-link {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      color: #6b7280;
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .footer-link:hover { color: #1f2937; text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>boxDialog</h1>
+      <p>Sistema de diálogos modales en vanilla JS con SVGs — v3.0</p>
+    </header>
+
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-tab="examples" role="tab">Ejemplos</button>
+      <button class="tab" data-tab="docs" role="tab">Documentación</button>
+    </nav>
+
+    <!-- ========== EXAMPLES PANEL ========== -->
+    <section class="panel active" id="panel-examples" role="tabpanel">
+      <div class="examples">
+        <button class="demo" onclick="exAlert()"><span class="dot dot-red"></span> alert()</button>
+        <button class="demo" onclick="exSuccess()"><span class="dot dot-green"></span> success()</button>
+        <button class="demo" onclick="exConfirm()"><span class="dot dot-blue"></span> confirm()</button>
+        <button class="demo" onclick="exPrompt()"><span class="dot dot-cyan"></span> prompt()</button>
+        <button class="demo" onclick="exShow()"><span class="dot dot-gray"></span> show() genérico</button>
+        <button class="demo" onclick="exPromptMulti()"><span class="dot dot-cyan"></span> prompt multilínea</button>
+        <button class="demo" onclick="exHtml()"><span class="dot dot-blue"></span> mensaje con HTML</button>
+        <button class="demo" onclick="exCustom()"><span class="dot dot-gray"></span> personalizado</button>
+        <button class="demo" onclick="exSolid()"><span class="dot dot-gray"></span> gradient: false</button>
+        <button class="demo" onclick="exToast()"><span class="dot dot-green"></span> toast()</button>
+        <button class="demo" onclick="exToasts()"><span class="dot dot-red"></span> varios toasts</button>
+        <button class="demo" onclick="exCloseAll()"><span class="dot dot-gray"></span> closeAll()</button>
+      </div>
+
+      <span class="log-label">Consola de resultados (Promise)</span>
+      <div class="log" id="log">Esperando acción...</div>
+
+      <a class="footer-link" href="https://github.com/redbumlandiaa/box-dialog" target="_blank" rel="noopener">→ Ver en GitHub</a>
+    </section>
+
+    <!-- ========== DOCS PANEL ========== -->
+    <section class="panel" id="panel-docs" role="tabpanel">
+      <div class="docs">
+
+        <h2>Instalación</h2>
+        <p>Incluye el CSS y el JS en tu página. Sin dependencias.</p>
+        <div class="code-block">
+          <button class="copy-btn" data-copy>Copiar</button>
+<pre><span class="c-com">&lt;!-- En el &lt;head&gt; --&gt;</span>
+<span class="c-kw">&lt;link</span> <span class="c-var">rel</span>=<span class="c-str">"stylesheet"</span> <span class="c-var">href</span>=<span class="c-str">"box-dialog.css"</span><span class="c-kw">&gt;</span>
+
+<span class="c-com">&lt;!-- Antes de &lt;/body&gt; --&gt;</span>
+<span class="c-kw">&lt;script</span> <span class="c-var">src</span>=<span class="c-str">"box-dialog.js"</span><span class="c-kw">&gt;&lt;/script&gt;</span></pre>
+        </div>
+
+        <h2>API rápida</h2>
+        <p>Todos los métodos devuelven una <code>Promise</code> que se resuelve con <code>{ action, value? }</code>.</p>
+
+        <h3><code>boxDialog.alert(options)</code></h3>
+        <p>Diálogo de error en <strong>rojo</strong>. Se usa para notificar al usuario sobre algo que salió mal o requiere su atención.</p>
+        <div class="code-block">
+          <button class="copy-btn" data-copy>Copiar</button>
+<pre><span class="c-kw">const</span> <span class="c-var">result</span> = <span class="c-kw">await</span> <span class="c-var">boxDialog</span>.<span class="c-fn">alert</span>({
+  <span class="c-var">title</span>: <span class="c-str">'Error de conexión'</span>,
+  <span class="c-var">message</span>: <span class="c-str">'No se pudo guardar el archivo.'</span>,
+});
+<span class="c-com">// result.action: 'ok' | 'escape' | 'close' | 'backdrop'</span></pre>
+        </div>
+
+        <h3><code>boxDialog.success(options)</code></h3>
+        <p>Diálogo de éxito en <strong>verde</strong>. Confirmación de que una operación se completó.</p>
+        <div class="code-block">
+          <button class="copy-btn" data-copy>Copiar</button>
+<pre><span class="c-kw">await</span> <span class="c-var">boxDialog</span>.<span class="c-fn">success</span>({
+  <span class="c-var">title</span>: <span class="c-str">'¡Listo!'</span>,
+  <span class="c-var">message</span>: <span class="c-str">'Cambios guardados correctamente.'</span>,
+});</pre>
+        </div>
+
+        <h3><code>boxDialog.confirm(options)</code></h3>
+        <p>Diálogo de confirmación en <strong>azul</strong>. Ideal para pedir confirmación antes de una acción.</p>
+        <div class="code-block">
+          <button class="copy-btn" data-copy>Copiar</button>
+<pre><span class="c-kw">const</span> { <span class="c-var">action</span> } = <span class="c-kw">await</span> <span class="c-var">boxDialog</span>.<span class="c-fn">confirm</span>({
+  <span class="c-var">title</span>: <span class="c-str">'Eliminar usuario'</span>,
+  <span class="c-var">message</span>: <span class="c-str">'¿Estás seguro? Esta acción no se puede deshacer.'</span>,
+  <span class="c-var">buttons</span>: [
+    { <span class="c-var">text</span>: <span class="c-str">'Cancelar'</span>, <span class="c-var">value</span>: <span class="c-str">'cancel'</span> },
+    { <span class="c-var">text</span>: <span class="c-str">'Eliminar'</span>, <span class="c-var">value</span>: <span class="c-str">'delete'</span>, <span class="c-var">primary</span>: <span class="c-kw">true</span> },
+  ],
+});
+
+<span class="c-kw">if</span> (<span class="c-var">action</span> === <span class="c-str">'delete'</span>) {
+  <span class="c-com">// ejecutar la eliminación</span>
+}</pre>
+        </div>
+
+        <h3><code>boxDialog.prompt(options)</code></h3>
+        <p>Diálogo con <strong>campo de texto</strong>. La Promise incluye <code>value</code> con el contenido.</p>
+        <div class="code-block">
+          <button class="copy-btn" data-copy>Copiar</button>
+<pre><span class="c-kw">const</span> { <span class="c-var">action</span>, <span class="c-var">value</span> } = <span class="c-kw">await</span> <span class="c-var">boxDialog</span>.<span class="c-fn">prompt</span>({
+  <span class="c-var">title</span>: <span class="c-str">'Tu nombre'</span>,
+  <span class="c-var">message</span>: <span class="c-str">'¿Cómo te llamas?'</span>,
+  <span class="c-var">inputPlaceholder</span>: <span class="c-str">'Ej. Ana'</span>,
+  <span class="c-var">inputValue</span>: <span class="c-str">''</span>,        <span class="c-com">// valor inicial</span>
+  <span class="c-var">multiLine</span>: <span class="c-kw">false</span>,      <span class="c-com">// true =&gt; textarea</span>
+  <span class="c-var">rows</span>: <span class="c-num">4</span>,                <span class="c-com">// filas del textarea</span>
+});
+
+<span class="c-kw">if</span> (<span class="c-var">action</span> === <span class="c-str">'ok'</span>) {
+  <span class="c-var">console</span>.<span class="c-fn">log</span>(<span class="c-str">'Hola'</span>, <span class="c-var">value</span>);
+}</pre>
+        </div>
+
+        <h3><code>boxDialog.show(options)</code></h3>
+        <p>Diálogo <strong>genérico</strong> con control total sobre color, icono, ancho y botones.</p>
+        <div class="code-block">
+          <button class="copy-btn" data-copy>Copiar</button>
+<pre><span class="c-kw">await</span> <span class="c-var">boxDialog</span>.<span class="c-fn">show</span>({
+  <span class="c-var">title</span>: <span class="c-str">'Guardar cambios'</span>,
+  <span class="c-var">message</span>: <span class="c-str">'Si sales ahora perderás los cambios.'</span>,
+  <span class="c-var">color</span>: <span class="c-str">'#0891b2'</span>,           <span class="c-com">// color del header y borde</span>
+  <span class="c-var">icon</span>: <span class="c-str">'info'</span>,               <span class="c-com">// alert | success | confirm | info | error</span>
+  <span class="c-var">width</span>: <span class="c-num">480</span>,                <span class="c-com">// ancho máximo en px</span>
+  <span class="c-var">gradient</span>: <span class="c-kw">true</span>,            <span class="c-com">// false =&gt; color sólido</span>
+  <span class="c-var">closeOnBackdrop</span>: <span class="c-kw">true</span>,     <span class="c-com">// cerrar al hacer click fuera</span>
+  <span class="c-var">closeOnEsc</span>: <span class="c-kw">true</span>,
+  <span class="c-var">showClose</span>: <span class="c-kw">true</span>,          <span class="c-com">// mostrar la X</span>
+  <span class="c-var">buttons</span>: [
+    { <span class="c-var">text</span>: <span class="c-str">'Cancelar'</span>,  <span class="c-var">value</span>: <span class="c-str">'cancel'</span> },
+    { <span class="c-var">text</span>: <span class="c-str">'Guardar'</span>,   <span class="c-var">value</span>: <span class="c-str">'save'</span>, <span class="c-var">primary</span>: <span class="c-kw">true</span> },
+  ],
+});</pre>
+        </div>
+        <p>El campo <code>message</code> acepta HTML. Útil para enlaces, listas o contenido enriquecido:</p>
+        <div class="code-block">
+          <button class="copy-btn" data-copy>Copiar</button>
+<pre><span class="c-kw">await</span> <span class="c-var">boxDialog</span>.<span class="c-fn">show</span>({
+  <span class="c-var">title</span>: <span class="c-str">'Términos'</span>,
+  <span class="c-var">message</span>: <span class="c-str">`&lt;p&gt;Al continuar aceptas nuestros &lt;a href="#"&gt;términos&lt;/a&gt;.&lt;/p&gt;`</span>,
+});</pre>
+        </div>
+
+        <h3><code>boxDialog.toast(options)</code></h3>
+        <p>Notificación <strong>no bloqueante</strong> que se cierra sola. Ideal para feedback rápido.</p>
+        <div class="code-block">
+          <button class="copy-btn" data-copy>Copiar</button>
+<pre><span class="c-kw">await</span> <span class="c-var">boxDialog</span>.<span class="c-fn">toast</span>({
+  <span class="c-var">message</span>: <span class="c-str">'Guardado'</span>,
+  <span class="c-var">type</span>: <span class="c-str">'success'</span>,                          <span class="c-com">// success | error | info | confirm</span>
+  <span class="c-var">position</span>: <span class="c-str">'top-right'</span>,                     <span class="c-com">// top-left|top-center|top-right|bottom-*</span>
+  <span class="c-var">duration</span>: <span class="c-num">3000</span>,                            <span class="c-com">// ms antes de cerrarse</span>
+});</pre>
+        </div>
+
+        <h3><code>boxDialog.closeAll()</code></h3>
+        <p>Cierra todos los diálogos abiertos (útil en logout o reset de estado).</p>
+        <div class="code-block">
+          <button class="copy-btn" data-copy>Copiar</button>
+<pre><span class="c-var">boxDialog</span>.<span class="c-fn">closeAll</span>();</pre>
+        </div>
+
+        <h2>Referencia de opciones</h2>
+        <table>
+          <thead>
+            <tr><th>Opción</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>title</td><td class="type">string</td><td>'Estado'</td><td>Título del diálogo</td></tr>
+            <tr><td>message</td><td class="type">string|HTML</td><td>''</td><td>Contenido del cuerpo</td></tr>
+            <tr><td>color</td><td class="type">string (hex)</td><td>#1ab849</td><td>Color del borde, header y botón primario</td></tr>
+            <tr><td>icon</td><td class="type">string</td><td>null</td><td>alert, success, confirm, info, error</td></tr>
+            <tr><td>width</td><td class="type">number</td><td>380</td><td>Ancho máximo en píxeles</td></tr>
+            <tr><td>gradient</td><td class="type">boolean</td><td>true</td><td>Header con gradiente o color sólido</td></tr>
+            <tr><td>closeOnBackdrop</td><td class="type">boolean</td><td>true</td><td>Cierra al hacer click fuera</td></tr>
+            <tr><td>closeOnEsc</td><td class="type">boolean</td><td>true</td><td>Cierra con la tecla ESC</td></tr>
+            <tr><td>showClose</td><td class="type">boolean</td><td>true</td><td>Muestra el botón X en el header</td></tr>
+            <tr><td>input</td><td class="type">boolean</td><td>false</td><td>true =&gt; muestra input (lo activa prompt automáticamente)</td></tr>
+            <tr><td>multiLine</td><td class="type">boolean</td><td>false</td><td>input (false) o textarea (true)</td></tr>
+            <tr><td>rows</td><td class="type">number</td><td>4</td><td>Filas del textarea</td></tr>
+            <tr><td>inputPlaceholder</td><td class="type">string</td><td>''</td><td>Placeholder del input</td></tr>
+            <tr><td>inputValue</td><td class="type">string</td><td>''</td><td>Valor inicial del input</td></tr>
+            <tr><td>focusOnInput</td><td class="type">boolean</td><td>false</td><td>Foco inicial en el input</td></tr>
+            <tr><td>buttons</td><td class="type">array</td><td>[Ok]</td><td>Array de <code>{ text, value, primary }</code></td></tr>
+          </tbody>
+        </table>
+
+        <h2>Resolución de la Promise</h2>
+        <p>Cada diálogo retorna un objeto con esta forma:</p>
+        <div class="code-block">
+          <button class="copy-btn" data-copy>Copiar</button>
+<pre>{
+  <span class="c-var">action</span>: <span class="c-str">'ok'</span>,         <span class="c-com">// o 'cancel', 'yes', 'no', 'escape', 'close', 'backdrop'</span>
+  <span class="c-var">value</span>: <span class="c-str">'texto'</span>,      <span class="c-com">// solo en prompt: el contenido del input</span>
+}</pre>
+        </div>
+        <ul>
+          <li><code>'ok' / 'yes' / 'save' / 'delete'</code> ... según el <code>value</code> del botón presionado</li>
+          <li><code>'escape'</code> — el usuario presionó <span class="kbd">Esc</span></li>
+          <li><code>'close'</code> — el usuario hizo click en la X</li>
+          <li><code>'backdrop'</code> — el usuario hizo click fuera del diálogo</li>
+        </ul>
+
+        <h2>Atajos de teclado</h2>
+        <ul>
+          <li><span class="kbd">Esc</span> — cerrar el diálogo</li>
+          <li><span class="kbd">Tab</span> o <span class="kbd">→</span> — siguiente botón (cicla)</li>
+          <li><span class="kbd">←</span> — botón anterior (cicla)</li>
+          <li><span class="kbd">Enter</span> — activar el botón enfocado</li>
+        </ul>
+
+        <h2>Theming con variables CSS</h2>
+        <p>Puedes sobreescribir las variables CSS para personalizar el aspecto sin tocar el archivo del plugin:</p>
+        <div class="code-block">
+          <button class="copy-btn" data-copy>Copiar</button>
+<pre><span class="c-kw">:root</span> {
+  <span class="c-var">--bd-radius</span>: <span class="c-num">12px</span>;
+  <span class="c-var">--bd-shadow</span>: <span class="c-num">0</span> <span class="c-num">20px</span> <span class="c-num">60px</span> <span class="c-fn">rgba</span>(<span class="c-num">0</span>,<span class="c-num">0</span>,<span class="c-num">0</span>,<span class="c-num">0.3</span>);
+  <span class="c-var">--bd-z</span>: <span class="c-num">9999</span>;
+  <span class="c-var">--bd-anim</span>: <span class="c-num">200ms</span> <span class="c-str">cubic-bezier(0.16, 1, 0.3, 1)</span>;
+}</pre>
+        </div>
+        <p>El color de cada diálogo se controla por instancia con la opción <code>color</code> (se aplica como variable <code>--bd-color</code> al elemento).</p>
+
+        <h2>Accesibilidad</h2>
+        <ul>
+          <li><code>role="alertdialog"</code> y <code>aria-modal="true"</code> en el contenedor</li>
+          <li>Focus trap dentro del diálogo</li>
+          <li>Cierre con <span class="kbd">Esc</span></li>
+          <li>Texto no seleccionable (<code>user-select: none</code>) excepto en inputs</li>
+        </ul>
+
+        <a class="footer-link" href="https://github.com/redbumlandiaa/box-dialog" target="_blank" rel="noopener">→ Ver en GitHub</a>
+      </div>
+    </section>
+  </div>
+
+  <script src="box-dialog.js"></script>
+  <script>
+    /* ===== Tabs ===== */
+    document.querySelectorAll('.tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const target = tab.dataset.tab;
+        document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('active', t === tab));
+        document.querySelectorAll('.panel').forEach((p) =>
+          p.classList.toggle('active', p.id === 'panel-' + target)
+        );
+      });
+    });
+
+    /* ===== Copy buttons ===== */
+    document.querySelectorAll('.copy-btn').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const pre = btn.parentElement.querySelector('pre');
+        try {
+          await navigator.clipboard.writeText(pre.innerText);
+          const original = btn.textContent;
+          btn.textContent = '✓ Copiado';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = original;
+            btn.classList.remove('copied');
+          }, 1500);
+        } catch (e) {
+          btn.textContent = 'Error';
+        }
+      });
+    });
+
+    /* ===== Examples ===== */
+    const log = document.getElementById('log');
+    const logResult = (label, result) => {
+      const time = new Date().toLocaleTimeString();
+      log.textContent = `[${time}] ${label}\n` + JSON.stringify(result, null, 2);
+    };
+
+    async function exAlert() {
+      const r = await boxDialog.alert({ message: 'No se puede continuar con la operación.' });
+      logResult('alert()', r);
+    }
+    async function exSuccess() {
+      const r = await boxDialog.success({ message: 'Los datos se guardaron correctamente.' });
+      logResult('success()', r);
+    }
+    async function exConfirm() {
+      const r = await boxDialog.confirm({ message: '¿Deseas eliminar este registro?' });
+      logResult('confirm()', r);
+    }
+    async function exPrompt() {
+      const r = await boxDialog.prompt({
+        title: 'Tu nombre',
+        message: 'Escribe tu nombre para continuar:',
+        inputPlaceholder: 'Ej. Ana',
+      });
+      logResult('prompt()', r);
+    }
+    async function exShow() {
+      const r = await boxDialog.show({
+        title: 'Guardar cambios',
+        message: 'Si sales ahora perderás los cambios.',
+        color: '#0891b2',
+        icon: 'info',
+        buttons: [
+          { text: 'Cancelar', value: 'cancel' },
+          { text: 'No guardar', value: 'discard' },
+          { text: 'Guardar', value: 'save', primary: true },
+        ],
+      });
+      logResult('show()', r);
+    }
+    async function exPromptMulti() {
+      const r = await boxDialog.prompt({
+        title: 'Comentarios',
+        message: 'Cuéntanos tu opinión:',
+        multiLine: true,
+        rows: 5,
+        inputValue: 'Escribe aquí...',
+      });
+      logResult('prompt multilínea', r);
+    }
+    async function exHtml() {
+      const r = await boxDialog.show({
+        title: 'Términos y condiciones',
+        message: `
+          <p>Al continuar aceptas nuestros <a href="#" onclick="event.preventDefault();">términos</a>.</p>
+          <p style="color:#6b7280;font-size:13px;margin-top:12px;">Puedes revisar el documento completo antes de continuar.</p>
+        `,
+        color: '#230de3',
+        icon: 'confirm',
+        buttons: [{ text: 'Aceptar', value: 'ok', primary: true }],
+      });
+      logResult('show() con HTML', r);
+    }
+    async function exCustom() {
+      const r = await boxDialog.show({
+        title: 'Personalizado',
+        message: 'Diálogo con color e icono personalizados.',
+        color: '#f59e0b',
+        icon: 'alert',
+        width: 480,
+        closeOnBackdrop: false,
+        buttons: [
+          { text: 'Cancelar', value: 'cancel' },
+          { text: 'Entendido', value: 'ok', primary: true },
+        ],
+      });
+      logResult('custom()', r);
+    }
+    async function exSolid() {
+      const r = await boxDialog.show({
+        title: 'Header sólido',
+        message: 'Mismo diálogo pero con el header en color sólido (gradient: false).',
+        color: '#7c3aed',
+        icon: 'info',
+        gradient: false,
+        buttons: [{ text: 'Cerrar', value: 'ok', primary: true }],
+      });
+      logResult('gradient: false', r);
+    }
+    async function exToast() {
+      await boxDialog.toast({
+        message: 'Cambios guardados correctamente.',
+        type: 'success',
+        duration: 2500,
+      });
+      logResult('toast()', { action: 'auto-closed' });
+    }
+    async function exToasts() {
+      const types = ['success', 'info', 'error', 'confirm'];
+      for (const t of types) {
+        boxDialog.toast({
+          message: 'Notificación tipo ' + t,
+          type: t,
+          position: 'top-right',
+          duration: 2000,
+        });
+      }
+      logResult('toasts múltiples', { count: types.length });
+    }
+    function exCloseAll() {
+      boxDialog.closeAll();
+      logResult('closeAll()', { action: 'closed' });
+    }
+  </script>
+</body>
+</html>
