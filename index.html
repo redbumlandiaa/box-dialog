@@ -264,7 +264,7 @@
   <div class="container">
     <header>
       <h1>boxDialog</h1>
-      <p>Sistema de diálogos modales en vanilla JS con SVGs — v3.0</p>
+      <p>Sistema de diálogos modales en vanilla JS con SVGs — v1.0</p>
     </header>
 
     <nav class="tabs" role="tablist">
@@ -397,6 +397,11 @@
   <span class="c-var">title</span>: <span class="c-str">'Términos'</span>,
   <span class="c-var">message</span>: <span class="c-str">`&lt;p&gt;Al continuar aceptas nuestros &lt;a href="#"&gt;términos&lt;/a&gt;.&lt;/p&gt;`</span>,
 });</pre>
+        </div>
+
+        <div style="background:#fef3cd;border:1px solid #ffc107;border-radius:6px;padding:12px 14px;margin:14px 0;font-size:13px;">
+          <strong style="color:#856404;">⚠️ Advertencia de seguridad:</strong>
+          <p style="margin:6px 0 0;color:#856404;">El contenido de <code>message</code> se inyecta con <code>innerHTML</code>. Si el texto proviene de datos del usuario o una fuente externa, existe riesgo de XSS. Usa texto plano o sanitiza el HTML antes de pasarlo. Para contenido seguro, evita incluir HTML no confiable en <code>message</code>.</p>
         </div>
 
         <h3><code>boxDialog.toast(options)</code></h3>
